@@ -1,0 +1,2 @@
+# CodeConnecter
+#include "~~"のみをインクルードしてくれるツール
