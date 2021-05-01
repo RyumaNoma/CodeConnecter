@@ -3,6 +3,28 @@
 #include <fstream>
 #include <vector>
 
+std::string get_include_filename(std::string line)
+{
+    int i = 8;
+    std::string file_name = "";
+
+    while (line[i] == ' ')
+    {
+        ++i;
+    }
+    
+    if (line[i] == '"')
+    {
+        while (line[i] != '"')
+        {
+            file_name += line[i];
+            ++i;
+        }
+    }
+
+    return file_name;
+}
+
 int main(int argc, char** argv)
 {
     std::string file_name, extension;
@@ -48,29 +70,17 @@ int main(int argc, char** argv)
     {
         if (line.substr(0, 8) == "#include")
         {
-            int i = 8;
-            while (line[i] == ' ')
+            std::string include_file = get_include_filename(line);
+            if (include_file != "")
             {
-                ++i;
-            }
-            
-            if (line[i] == '"')
-            {
-                ++i;
-                std::string part_name;
-                while (line[i] != '"')
-                {
-                    part_name += line[i];
-                    ++i;
-                }
-
-                std::ifstream part(part_name);
+                std::ifstream part(include_file);
                 if (!part.is_open())
                 {
-                    std::cerr << "could not open " << part_name << std::endl;
+                    std::cerr << "could not open " << include_file << std::endl;
                     return -1;
                 }
 
+                // copy include file
                 std::string buf;
                 while (std::getline(part, buf))
                 {
@@ -79,10 +89,9 @@ int main(int argc, char** argv)
 
                 part.close();
 
-                std::cout << "include : " << part_name << std::endl;
+                std::cout << "include : " << include_file << std::endl;
                 continue;
             }
-            
         }
         
         connected_file << line << std::endl;
