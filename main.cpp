@@ -15,6 +15,7 @@ std::string get_include_filename(std::string line)
     
     if (line[i] == '"')
     {
+        ++i;
         while (line[i] != '"')
         {
             file_name += line[i];
